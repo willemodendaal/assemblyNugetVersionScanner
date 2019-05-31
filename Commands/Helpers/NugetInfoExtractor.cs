@@ -75,7 +75,8 @@ namespace Willem.AssemblyReferenceDebugger.Commands.Helpers
 			var filesInThisFolder = folder.GetFiles();
 			var matchingFileNameOrNull = filesInThisFolder.FirstOrDefault(f => f.Name == asm.Name);
 			if (matchingFileNameOrNull != null 
-			    && MatchingFileVersionIsTheSame(matchingFileNameOrNull, asm))
+			    && MatchingFileVersionIsTheSame(matchingFileNameOrNull, asm)
+			    && FileContentsAreTheSame(matchingFileNameOrNull, asm))
 			{
 				return true;
 			}
@@ -89,6 +90,12 @@ namespace Willem.AssemblyReferenceDebugger.Commands.Helpers
 
 			//No match in this folder, or sub folders.
 			return false;
+		}
+
+		private bool FileContentsAreTheSame(FileInfo matchingFileNameOrNull, FileInfo asm)
+		{
+			return File.ReadAllBytes(matchingFileNameOrNull.FullName)
+				.SequenceEqual(File.ReadAllBytes(asm.FullName));
 		}
 
 		private bool MatchingFileVersionIsTheSame(FileInfo assemblyThatMightBeAMatch, FileInfo asm)
